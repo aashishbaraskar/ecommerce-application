@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'payment.apps.PaymentConfig',
     'shop.apps.ShopConfig',
+    'coupons.apps.CouponsConfig',
     # 'django_celery_beat',
     # 'django_celery_results'
 ]

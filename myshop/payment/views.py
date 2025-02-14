@@ -20,6 +20,9 @@ def payment_process(request):
         cancel_url = request.build_absolute_uri(
             reverse('payment:canceled')
         )
+        # Retrieve user email if available
+        user_email = request.user.email if request.user.is_authenticated else "ashish@yopmail.com"
+
         # Stripe checkout session data
         session_data = {
             'mode': 'payment',
@@ -28,6 +31,11 @@ def payment_process(request):
             'cancel_url': cancel_url,
             'line_items': []
         }
+        # Add user email as read-only (pre-filled)
+        if user_email:
+            session_data['customer_email'] = user_email
+            session_data['customer_creation'] = 'always'  # Ensures Stripe identifies the user
+
         # add order items to the Stripe checkout session
         for item in order.items.all():
             session_data['line_items'].append(
@@ -42,6 +50,8 @@ def payment_process(request):
                     'quantity': item.quantity,
                 }
             )
+        print("session_data - ", session_data)
+        
         # create Stripe checkout session
         session = stripe.checkout.Session.create(**session_data)
         # redirect to Stripe payment form
